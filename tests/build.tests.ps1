@@ -7,12 +7,18 @@ describe 'Build' {
 
     context 'Compile module' {
         BeforeAll {
+
+            Write-Host "PSScriptRoot: $PSScriptRoot"
+            Write-Host "OutputPath: $outputPath"
+
             # build is PS job so psake doesn't freak out because it's nested
             Start-Job -ScriptBlock {
                 Set-Location $using:PSScriptRoot/TestModule
                 $global:PSBuildCompile = $true
                 ./build.ps1 -Task Build
             } | Wait-Job
+
+            Write-Host (Get-ChildItem "$PSScriptRoot/TestModule/Output" -Recurse | Format-List | Out-String)
         }
 
         AfterAll {
