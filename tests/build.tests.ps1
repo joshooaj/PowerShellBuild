@@ -22,7 +22,7 @@ describe 'Build' {
         }
 
         AfterAll {
-            Remove-Item "$PSScriptRoot/TestModule/Output" -Recurse -Force
+            # Remove-Item "$PSScriptRoot/TestModule/Output" -Recurse -Force
         }
 
         it 'Creates module' {
