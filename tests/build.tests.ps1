@@ -1,8 +1,15 @@
 describe 'Build' {
 
     BeforeAll {
-        $manifest   = Test-ModuleManifest -Path $PSScriptRoot/TestModule/TestModule/TestModule.psd1
-        $outputPath = "$PSScriptRoot/TestModule/Output/TestModule/$($manifest.Version)"
+
+        $moduleName         = $env:BHProjectName
+        $manifest           = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
+        $outputDir          = [IO.Path]::Combine($env:BHProjectPath, 'Output')
+        $outputModDir       = [IO.Path]::Combine($outputDir, $env:BHProjectName)
+        $outputPath         = [IO.Path]::Combine($outputModDir, $manifest.ModuleVersion)
+
+        #$manifest   = Test-ModuleManifest -Path $PSScriptRoot/TestModule/TestModule/TestModule.psd1
+        #$outputPath = "$PSScriptRoot/TestModule/Output/TestModule/$($manifest.Version)"
     }
 
     context 'Compile module' {
@@ -17,6 +24,13 @@ describe 'Build' {
                 $global:PSBuildCompile = $true
                 ./build.ps1 -Task Build
             } | Wait-Job
+
+            # Start-Job -ScriptBlock {
+            #     # Set-Location /home/runner/work/PowerShellBuild/PowerShellBuild/tests/TestModule
+            #     Set-Location C:\Users\Brandon\OneDrive\Documents\GitHub\psake\PowerShellBuild\tests\TestModule
+            #     $global:PSBuildCompile = $true
+            #     ./build.ps1 -Task Build
+            # } | Wait-Job
 
             Write-Host (Get-ChildItem "$PSScriptRoot/TestModule/Output" -Recurse | Format-List | Out-String)
         }
