@@ -1,13 +1,6 @@
 describe 'Build' {
 
     BeforeAll {
-
-        # $moduleName         = 'TestModule'
-        # $manifest           = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
-        # $outputDir          = [IO.Path]::Combine($env:BHProjectPath, 'Output')
-        # $outputModDir       = [IO.Path]::Combine($outputDir, $env:BHProjectName)
-        # $testModuleOutputPath         = [IO.Path]::Combine($outputModDir, $manifest.ModuleVersion)
-
         # Hack for GH Actions
         # For some reason, the TestModule build process create the output in the project root
         # and not relative to it's own build file.
@@ -16,9 +9,6 @@ describe 'Build' {
         } else {
             $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
         }
-
-        #$manifest   = Test-ModuleManifest -Path $PSScriptRoot/TestModule/TestModule/TestModule.psd1
-        #$testModuleOutputPath = "$PSScriptRoot/TestModule/Output/TestModule/$($manifest.Version)"
     }
 
     context 'Compile module' {
@@ -33,15 +23,6 @@ describe 'Build' {
                 $global:PSBuildCompile = $true
                 ./build.ps1 -Task Build
             } | Wait-Job
-
-            # Start-Job -ScriptBlock {
-            #     # Set-Location /home/runner/work/PowerShellBuild/PowerShellBuild/tests/TestModule
-            #     Set-Location C:\Users\Brandon\OneDrive\Documents\GitHub\psake\PowerShellBuild\tests\TestModule
-            #     $global:PSBuildCompile = $true
-            #     ./build.ps1 -Task Build
-            # } | Wait-Job
-
-            #Write-Host (Get-ChildItem "$PSScriptRoot/TestModule/Output" -Recurse | Format-List | Out-String)
         }
 
         AfterAll {
