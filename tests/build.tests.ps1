@@ -7,7 +7,15 @@ describe 'Build' {
         # $outputDir          = [IO.Path]::Combine($env:BHProjectPath, 'Output')
         # $outputModDir       = [IO.Path]::Combine($outputDir, $env:BHProjectName)
         # $testModuleOutputPath         = [IO.Path]::Combine($outputModDir, $manifest.ModuleVersion)
-        $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
+
+        # Hack for GH Actions
+        # For some reason, the TestModule build process create the output in the project root
+        # and not relative to it's own build file.
+        if ($env:GITHUB_ACTION) {
+            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'Output', 'TestModule', '0.1.0')
+        } else {
+            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
+        }
 
         #$manifest   = Test-ModuleManifest -Path $PSScriptRoot/TestModule/TestModule/TestModule.psd1
         #$testModuleOutputPath = "$PSScriptRoot/TestModule/Output/TestModule/$($manifest.Version)"
