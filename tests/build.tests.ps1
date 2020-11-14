@@ -2,11 +2,12 @@ describe 'Build' {
 
     BeforeAll {
 
-        $moduleName         = $env:BHProjectName
-        $manifest           = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
-        $outputDir          = [IO.Path]::Combine($env:BHProjectPath, 'Output')
-        $outputModDir       = [IO.Path]::Combine($outputDir, $env:BHProjectName)
-        $outputPath         = [IO.Path]::Combine($outputModDir, $manifest.ModuleVersion)
+        # $moduleName         = 'TestModule'
+        # $manifest           = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
+        # $outputDir          = [IO.Path]::Combine($env:BHProjectPath, 'Output')
+        # $outputModDir       = [IO.Path]::Combine($outputDir, $env:BHProjectName)
+        # $outputPath         = [IO.Path]::Combine($outputModDir, $manifest.ModuleVersion)
+        $outputPath   = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
 
         #$manifest   = Test-ModuleManifest -Path $PSScriptRoot/TestModule/TestModule/TestModule.psd1
         #$outputPath = "$PSScriptRoot/TestModule/Output/TestModule/$($manifest.Version)"
@@ -32,7 +33,7 @@ describe 'Build' {
             #     ./build.ps1 -Task Build
             # } | Wait-Job
 
-            Write-Host (Get-ChildItem "$PSScriptRoot/TestModule/Output" -Recurse | Format-List | Out-String)
+            #Write-Host (Get-ChildItem "$PSScriptRoot/TestModule/Output" -Recurse | Format-List | Out-String)
         }
 
         AfterAll {
