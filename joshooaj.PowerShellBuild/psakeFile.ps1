@@ -116,8 +116,12 @@ task BuildHelp -depends GenerateMarkdown, GenerateMAML {} -description 'Builds h
 
 $genMarkdownPreReqs = {
     $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
+    $latestPlatyPS = Get-Module -ListAvailable platyPS | Sort-Object Version | Select-Object -Last 1
+    if ($null -eq $latestPlatyPS) {
         Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
+        $result = $false
+    } elseif ($PSVersionTable.PSVersion -ge '7.4' -and $latestPlatyPS.Version -le '1.0.0') {
+        Write-Warning "platyPS module v$($latestPlatyPS.Version) is not compatible with PowerShell $($PSVersionTable.PSVersion). Skipping [$($psake.context.currentTaskName)] task."
         $result = $false
     }
     $result
