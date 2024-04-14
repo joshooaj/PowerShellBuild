@@ -13,3 +13,7 @@ jobs:
     - name: Test
       shell: pwsh
       run: ./build.ps1 -Task Test -Bootstrap
+    - name: Test Windows PowerShell
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: ./build.ps1 -Task Test -Bootstrap
