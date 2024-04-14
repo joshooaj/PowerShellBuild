@@ -5,9 +5,9 @@ describe 'Build' {
         # For some reason, the TestModule build process create the output in the project root
         # and not relative to it's own build file.
         if ($env:GITHUB_ACTION) {
-            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'Output', 'TestModule', '0.1.0')
-        } else {
             $testModuleOutputPath = [IO.Path]::Combine($PSScriptRoot, '../', 'Output', 'TestModule', '0.1.0')
+        } else {
+            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'Output', 'TestModule', '0.1.0')
         }
     }
 
