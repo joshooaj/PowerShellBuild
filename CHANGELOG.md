@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.6.2] Unreleased
+## [0.6.2] 2024-04-14
+
+### Changed
+
+- Renamed module from `PowerShellBuild` to `joshooaj.PowerShellBuild` to differentiate from the upstream version by [devblackops Brandon Olin](https://github.com/devblackops) at [psake/PowerShellBuild](https://github.com/psake/PowerShellBuild)
+- Dev: Pinned devcontainer base image to `mcr.microsoft.com/powershell:lts-7.2-ubuntu-jammy` to avoid issues related to platyPS v0.14.2 and PowerShell v7.4
+- Dev: Commented out platyPS entry in `requirements.psd1` to limit potential noise in builds and CI/CD until platyPS v1 is released
+- Dev: Use Pester 5 syntax when invoking pester in `psakeFile.ps1`
 
 ### Fixed
 
