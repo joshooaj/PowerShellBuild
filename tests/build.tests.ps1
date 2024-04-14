@@ -7,7 +7,7 @@ describe 'Build' {
         if ($env:GITHUB_ACTION) {
             $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'Output', 'TestModule', '0.1.0')
         } else {
-            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
+            $testModuleOutputPath = [IO.Path]::Combine($PSScriptRoot, '../', 'Output', 'TestModule', '0.1.0')
         }
     }
 
