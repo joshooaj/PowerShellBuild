@@ -2,5 +2,11 @@
     "editor.insertSpaces": true,
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
-    "powershell.codeFormatting.preset": "OTBS"
+    "powershell.codeFormatting.preset": "OTBS",
+    "reflowMarkdown.preferredLineLength": 100,
+    "reflowMarkdown.wrapLongLinks":"doNotWrap",
+    "editor.rulers": [100],
+    "[markdown]": {
+        "files.trimTrailingWhitespace": false
+    }
 }
