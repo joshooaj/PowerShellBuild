@@ -18,12 +18,20 @@ describe 'Build' {
         BeforeAll {
             # build is PS job so psake doesn't freak out because it's nested
 
-            Start-Job -ArgumentList $script:testModuleProjectPath -ScriptBlock {
+            $buildSucceeded = Start-Job -ArgumentList $script:testModuleProjectPath -ScriptBlock {
                 param([string]$ProjectPath)
-                Set-Location -Path $ProjectPath -ErrorAction Stop
-                $global:PSBuildCompile = $true
-                ./build.ps1 -Task Build
-            } | Receive-Job -Wait -AutoRemoveJob
+                try {
+                    Set-Location -Path $ProjectPath -ErrorAction Stop
+                    $global:PSBuildCompile = $true
+                    & ./build.ps1 -Task Build -ErrorAction Stop
+                    $true
+                } catch {
+                    throw
+                }
+            } | Receive-Job -Wait -AutoRemoveJob -ErrorAction Stop
+            if (!$buildSucceeded) {
+                throw "TestModule build failed."
+            }
         }
 
         AfterAll {
@@ -71,12 +79,20 @@ describe 'Build' {
     context 'Dot-sourced module' {
         BeforeAll {
             # build is PS job so psake doesn't freak out because it's nested
-            Start-Job -ArgumentList $script:testModuleProjectPath  -ScriptBlock {
+            $buildSucceeded = Start-Job -ArgumentList $script:testModuleProjectPath  -ScriptBlock {
                 param([string]$ProjectPath)
-                Set-Location -Path $ProjectPath -ErrorAction Stop
-                $global:PSBuildCompile = $false
-                ./build.ps1 -Task Build
+                try {
+                    Set-Location -Path $ProjectPath -ErrorAction Stop
+                    $global:PSBuildCompile = $false
+                    & ./build.ps1 -Task Build -ErrorAction Stop
+                    $true
+                } catch {
+                    throw
+                }
             } | Receive-Job -Wait -AutoRemoveJob
+            if (!$buildSucceeded) {
+                throw "TestModule build failed."
+            }
         }
 
         AfterAll {
