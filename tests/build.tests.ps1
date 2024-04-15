@@ -1,30 +1,29 @@
 describe 'Build' {
 
     BeforeAll {
-        # Hack for GH Actions
-        # For some reason, the TestModule build process create the output in the project root
-        # and not relative to it's own build file.
-        if ($true -or $env:GITHUB_ACTION) {
-            $script:testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
-        }
+        $script:testModuleProjectPath = Join-Path $env:BHProjectPath 'tests/TestModule/'
+        $script:testModuleOutputPath = Join-Path $testModuleProjectPath 'Output/TestModule/0.1.0'
         $null = New-Item -Path $testModuleOutputPath -ItemType Directory -Force -ErrorAction Stop
+
+        Write-Host "PSScriptRoot: $PSScriptRoot"
+        Write-Host "TestModuleProjectPath: $testModuleProjectPath"
+        Write-Host "TestModuleOutputPath: $testModuleOutputPath"
     }
 
     context 'Compile module' {
         BeforeAll {
-
-            Write-Host "PSScriptRoot: $PSScriptRoot"
-            Write-Host "OutputPath: $testModuleOutputPath"
-
             # build is PS job so psake doesn't freak out because it's nested
-            Start-Job -WorkingDirectory $PSScriptRoot/TestModule -ScriptBlock {
+
+            Start-Job -ArgumentList $script:testModuleProjectPath -ScriptBlock {
+                param([string]$ProjectPath)
+                Set-Location -Path $ProjectPath -ErrorAction Stop
                 $global:PSBuildCompile = $true
                 ./build.ps1 -Task Build
             } | Wait-Job
         }
 
         AfterAll {
-            Remove-Item $testModuleOutputPath -Recurse -Force
+            #Remove-Item $testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
@@ -32,9 +31,6 @@ describe 'Build' {
         }
 
         it 'Has PSD1 and monolithic PSM1' {
-            Write-Host "OutputPath: $($script:testModuleOutputPath)"
-            Write-Host "OutputPath Exists: $(Test-Path $script:testModuleOutputPath)"
-
             (Get-ChildItem -Path $script:testModuleOutputPath -File).Count | Should -Be 2
             "$testModuleOutputPath/TestModule.psd1"                 | Should -Exist
             "$testModuleOutputPath/TestModule.psm1"                 | Should -Exist
@@ -71,15 +67,16 @@ describe 'Build' {
     context 'Dot-sourced module' {
         BeforeAll {
             # build is PS job so psake doesn't freak out because it's nested
-            Start-Job -ScriptBlock {
-                Set-Location $using:PSScriptRoot/TestModule
+            Start-Job -ArgumentList $script:testModuleProjectPath  -ScriptBlock {
+                param([string]$ProjectPath)
+                Set-Location -Path $ProjectPath -ErrorAction Stop
                 $global:PSBuildCompile = $false
                 ./build.ps1 -Task Build
-            } | Wait-Job
+            } | Receive-Job -Wait -AutoRemoveJob
         }
 
         AfterAll {
-            Remove-Item $testModuleOutputPath -Recurse -Force
+            #Remove-Item $testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
