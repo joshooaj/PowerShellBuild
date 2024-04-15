@@ -10,6 +10,8 @@ describe 'Build' {
         Write-Host "BHProjectPath: $($PWD.Path)"
         Write-Host "TestModuleProjectPath: $($env:BHProjectPath)"
         Write-Host "TestModuleOutputPath: $testModuleOutputPath"
+
+        Write-Host "TestModuleProjectPath Directory:`n`n$(Get-ChildItem -Path $script:testModuleProjectPath | Format-Table | Out-String)"
     }
 
     context 'Compile module' {
