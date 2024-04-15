@@ -32,7 +32,10 @@ describe 'Build' {
         }
 
         it 'Has PSD1 and monolithic PSM1' {
-            (Get-ChildItem -Path $testModuleOutputPath -File).Count | Should -Be 2
+            Write-Host "OutputPath: $($script:testModuleOutputPath)"
+            Write-Host "OutputPath Exists: $(Test-Path $script:testModuleOutputPath)"
+
+            (Get-ChildItem -Path $script:testModuleOutputPath -File).Count | Should -Be 2
             "$testModuleOutputPath/TestModule.psd1"                 | Should -Exist
             "$testModuleOutputPath/TestModule.psm1"                 | Should -Exist
             "$testModuleOutputPath/Public"                          | Should -Not -Exist
