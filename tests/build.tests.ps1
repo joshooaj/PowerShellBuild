@@ -17,15 +17,12 @@ describe 'Build' {
     context 'Compile module' {
         BeforeAll {
             # build in another process so psake doesn't freak out because it's nested
-            try {
-                Push-Location $script:testModuleProjectPath
-                $shell = (Get-Process -Id $PID).Name
-                exec {
-                    & $shell -NoLogo -NoProfile -NonInteractive -Command '$global:PSBuildCompile = $true; ./build.ps1 -Task Build -ErrorAction Stop' *>&1
-                }
-            } finally {
-                Pop-Location
-            }
+            Start-Job -ArgumentList $script:testModuleProjectPath -ScriptBlock {
+                param([string]$path)
+                Set-Location $path
+                $global:PSBuildCompile = $true
+                ./build.ps1 -Task Build
+            } | Receive-Job -Wait -AutoRemoveJob
         }
 
         AfterAll {
@@ -76,15 +73,12 @@ describe 'Build' {
     context 'Dot-sourced module' {
         BeforeAll {
             # build in another process so psake doesn't freak out because it's nested
-            try {
-                Push-Location $script:testModuleProjectPath
-                $shell = (Get-Process -Id $PID).Name
-                exec {
-                    & $shell -NoLogo -NoProfile -NonInteractive -Command '$global:PSBuildCompile = $false; ./build.ps1 -Task Build -ErrorAction Stop' *>&1
-                }
-            } finally {
-                Pop-Location
-            }
+            Start-Job -ArgumentList $script:testModuleProjectPath -ScriptBlock {
+                param([string]$path)
+                Set-Location $path
+                $global:PSBuildCompile = $false
+                ./build.ps1 -Task Build
+            } | Receive-Job -Wait -AutoRemoveJob
         }
 
         AfterAll {
