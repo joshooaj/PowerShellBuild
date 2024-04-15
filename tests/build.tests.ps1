@@ -16,26 +16,20 @@ describe 'Build' {
 
     context 'Compile module' {
         BeforeAll {
-            # build is PS job so psake doesn't freak out because it's nested
-
-            $buildSucceeded = Start-Job -ArgumentList $script:testModuleProjectPath -ScriptBlock {
-                param([string]$ProjectPath)
-                try {
-                    Set-Location -Path $ProjectPath -ErrorAction Stop
-                    $global:PSBuildCompile = $true
-                    & ./build.ps1 -Task Build -ErrorAction Stop
-                    $true
-                } catch {
-                    throw
+            # build in another process so psake doesn't freak out because it's nested
+            try {
+                Push-Location $script:testModuleProjectPath
+                $shell = (Get-Process -Id $PID).Name
+                exec {
+                    & $shell -NoLogo -NoProfile -NonInteractive -Command '$global:PSBuildCompile = $true; ./build.ps1 -Task Build -ErrorAction Stop' *>&1
                 }
-            } | Receive-Job -Wait -AutoRemoveJob -ErrorAction Stop
-            if (!$buildSucceeded) {
-                throw "TestModule build failed."
+            } finally {
+                Pop-Location
             }
         }
 
         AfterAll {
-            #Remove-Item $script:testModuleOutputPath -Recurse -Force
+            Remove-Item $script:testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
@@ -81,25 +75,20 @@ describe 'Build' {
 
     context 'Dot-sourced module' {
         BeforeAll {
-            # build is PS job so psake doesn't freak out because it's nested
-            $buildSucceeded = Start-Job -ArgumentList $script:testModuleProjectPath  -ScriptBlock {
-                param([string]$ProjectPath)
-                try {
-                    Set-Location -Path $ProjectPath -ErrorAction Stop
-                    $global:PSBuildCompile = $false
-                    & ./build.ps1 -Task Build -ErrorAction Stop
-                    $true
-                } catch {
-                    throw
+            # build in another process so psake doesn't freak out because it's nested
+            try {
+                Push-Location $script:testModuleProjectPath
+                $shell = (Get-Process -Id $PID).Name
+                exec {
+                    & $shell -NoLogo -NoProfile -NonInteractive -Command '$global:PSBuildCompile = $false; ./build.ps1 -Task Build -ErrorAction Stop' *>&1
                 }
-            } | Receive-Job -Wait -AutoRemoveJob
-            if (!$buildSucceeded) {
-                throw "TestModule build failed."
+            } finally {
+                Pop-Location
             }
         }
 
         AfterAll {
-            #Remove-Item $script:testModuleOutputPath -Recurse -Force
+            Remove-Item $script:testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
