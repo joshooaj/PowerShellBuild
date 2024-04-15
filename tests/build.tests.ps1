@@ -20,7 +20,7 @@ describe 'Build' {
             Start-Job -WorkingDirectory $PSScriptRoot/TestModule -ScriptBlock {
                 $global:PSBuildCompile = $true
                 ./build.ps1 -Task Build
-            } | Wait-Job
+            } | Receive-Job -Wait -AutoRemoveJob
         }
 
         AfterAll {
