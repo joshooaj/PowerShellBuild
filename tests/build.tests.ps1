@@ -1,14 +1,14 @@
 describe 'Build' {
 
     BeforeAll {
-        $script:testModuleProjectPath = Join-Path $PWD.Path 'tests/TestModule/'
+        $script:testModuleProjectPath = Join-Path $env:BHProjectPath 'tests/TestModule/'
         $script:testModuleOutputPath = Join-Path $testModuleProjectPath 'Output/TestModule/0.1.0'
         $null = New-Item -Path $testModuleOutputPath -ItemType Directory -Force -ErrorAction Stop
 
         Write-Host "PSScriptRoot: $PSScriptRoot"
         Write-Host "PWD.Path: $($PWD.Path)"
-        Write-Host "BHProjectPath: $($PWD.Path)"
-        Write-Host "TestModuleProjectPath: $($env:BHProjectPath)"
+        Write-Host "BHProjectPath: $($env:BHProjectPath)"
+        Write-Host "TestModuleProjectPath: $testModuleProjectPath"
         Write-Host "TestModuleOutputPath: $testModuleOutputPath"
 
         Write-Host "TestModuleProjectPath Directory:`n`n$(Get-ChildItem -Path $script:testModuleProjectPath | Format-Table | Out-String)"
