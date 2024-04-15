@@ -43,6 +43,8 @@ describe 'Build' {
         }
 
         it 'Has PSD1 and monolithic PSM1' {
+            Write-Host "TestModuleProjectPath Directory:`n`n$(Get-ChildItem -Path $script:testModuleOutputPath | Format-Table | Out-String)"
+
             (Get-ChildItem -Path $script:testModuleOutputPath -File).Count | Should -Be 2
             "$testModuleOutputPath/TestModule.psd1"                 | Should -Exist
             "$testModuleOutputPath/TestModule.psm1"                 | Should -Exist
