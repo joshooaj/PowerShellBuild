@@ -1,7 +1,7 @@
 @{
     RootModule        = 'joshooaj.PowerShellBuild.psm1'
     ModuleVersion     = '0.6.2'
-    GUID              = '15431eb8-be2d-4154-b8ad-4cb68a488e3d'
+    GUID              = '47fe082e-9178-405d-b332-90c8865ec239'
     Author            = 'Brandon Olin'
     CompanyName       = 'Community'
     Copyright         = '(c) Brandon Olin. All rights reserved.'
