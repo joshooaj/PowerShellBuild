@@ -12,5 +12,12 @@
     psake            = '4.9.0'
     PSScriptAnalyzer = '1.22.0'
     InvokeBuild      = '5.11.1'
-    platyPS          = '0.14.2'
+
+    platyPS          = @{
+        DependsOn  = 'RegisterLocalRepo'
+        Version    = '0.14.2'
+        Parameters = @{
+            Repository = 'PowerShellBuild-local'
+        }
+    }
 }

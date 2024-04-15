@@ -38,11 +38,13 @@ $ErrorActionPreference = 'Stop'
 if ($Bootstrap.IsPresent) {
     Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
     Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+    & $PSScriptRoot/installTempRepo.ps1
     if (-not (Get-Module -Name PSDepend -ListAvailable)) {
         Install-module -Name PSDepend -Repository PSGallery
     }
     Import-Module -Name PSDepend -Verbose:$false
     Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
+    & $PSScriptRoot/installTempRepo.ps1 -Uninstall
 }
 
 # Execute psake task(s)
