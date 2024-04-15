@@ -19,7 +19,7 @@ describe 'Build' {
                 Set-Location -Path $ProjectPath -ErrorAction Stop
                 $global:PSBuildCompile = $true
                 ./build.ps1 -Task Build
-            } | Wait-Job
+            } | Receive-Job -Wait -AutoRemoveJob
         }
 
         AfterAll {
