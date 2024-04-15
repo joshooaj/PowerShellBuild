@@ -20,11 +20,11 @@ describe 'Build' {
             Start-Job -WorkingDirectory $PSScriptRoot/TestModule -ScriptBlock {
                 $global:PSBuildCompile = $true
                 ./build.ps1 -Task Build
-            } | Receive-Job -Wait -AutoRemoveJob
+            } | Wait-Job
         }
 
         AfterAll {
-            #Remove-Item $testModuleOutputPath -Recurse -Force
+            Remove-Item $testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
@@ -79,7 +79,7 @@ describe 'Build' {
         }
 
         AfterAll {
-            #Remove-Item $testModuleOutputPath -Recurse -Force
+            Remove-Item $testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {

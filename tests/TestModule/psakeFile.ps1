@@ -1,4 +1,4 @@
-Import-Module ../../Output/PowerShellBuild -Force
+Import-Module ../../Output/joshooaj.PowerShellBuild -Force
 
 properties {
     # Pester can build the module using both scenarios
