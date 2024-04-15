@@ -62,6 +62,7 @@ if ($BuildTool -eq 'psake') {
             Format-Table -Property Name, Description, Alias, DependsOn
     } else {
         Set-BuildEnvironment -Force
+        Write-Host (Get-ChildItem env:\BH* | Format-Table | Out-String) -ForegroundColor Green
         Invoke-psake -buildFile $psakeFile -taskList $Task -nologo -properties $Properties
         exit ([int](-not $psake.build_success))
     }

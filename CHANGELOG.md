@@ -10,8 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Renamed module from `PowerShellBuild` to `joshooaj.PowerShellBuild` to differentiate from the upstream version by [devblackops Brandon Olin](https://github.com/devblackops) at [psake/PowerShellBuild](https://github.com/psake/PowerShellBuild)
-- Dev: Pinned devcontainer base image to `mcr.microsoft.com/powershell:lts-7.2-ubuntu-jammy` to avoid issues related to platyPS v0.14.2 and PowerShell v7.4
-- Dev: Commented out platyPS entry in `requirements.psd1` to limit potential noise in builds and CI/CD until platyPS v1 is released
+- Dev: When bootstrapping this project, a custom "0.15.0" version of platyPS is installed directly from the `Modules/` folder in the repo. The custom version includes `ProgressAction` as a common parameter.
 - Dev: Use Pester 5 syntax when invoking pester in `psakeFile.ps1`
 
 ### Fixed

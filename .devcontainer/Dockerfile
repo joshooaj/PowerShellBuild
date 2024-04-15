@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-FROM mcr.microsoft.com/powershell:lts-7.2-ubuntu-jammy
+FROM mcr.microsoft.com/powershell:latest
 
 # This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
 # property in devcontainer.json to use it. On Linux, the container user's GID/UIDs

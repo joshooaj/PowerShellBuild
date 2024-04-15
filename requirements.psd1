@@ -14,7 +14,7 @@
     InvokeBuild      = '5.11.1'
 
     platyPS          = @{
-        Version    = '0.14.2'
+        Version    = '0.15.0'
         Parameters = @{
             Repository = 'PowerShellBuild-local'
         }
