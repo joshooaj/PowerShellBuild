@@ -4,11 +4,10 @@ describe 'Build' {
         # Hack for GH Actions
         # For some reason, the TestModule build process create the output in the project root
         # and not relative to it's own build file.
-        if ($env:GITHUB_ACTION) {
-            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
-        } else {
-            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
+        if ($true -or $env:GITHUB_ACTION) {
+            $script:testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
         }
+        $null = New-Item -Path $testModuleOutputPath -ItemType Directory -Force -ErrorAction Stop
     }
 
     context 'Compile module' {
@@ -16,7 +15,7 @@ describe 'Build' {
 
             Write-Host "PSScriptRoot: $PSScriptRoot"
             Write-Host "OutputPath: $testModuleOutputPath"
-            $null = New-Item -Path $testModuleOutputPath -ItemType Directory -Force
+
             # build is PS job so psake doesn't freak out because it's nested
             Start-Job -WorkingDirectory $PSScriptRoot/TestModule -ScriptBlock {
                 $global:PSBuildCompile = $true
@@ -25,7 +24,7 @@ describe 'Build' {
         }
 
         AfterAll {
-            Remove-Item $testModuleOutputPath -Recurse -Force
+            #Remove-Item $testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
@@ -77,7 +76,7 @@ describe 'Build' {
         }
 
         AfterAll {
-            Remove-Item $testModuleOutputPath -Recurse -Force
+            #Remove-Item $testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
