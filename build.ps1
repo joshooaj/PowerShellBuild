@@ -23,7 +23,7 @@ param(
     [string[]]$Task = 'default',
 
     # Bootstrap dependencies
-    [switch]$Bootstrap,
+    [switch]$Bootstrap = $true,
 
     # List available build tasks
     [parameter(ParameterSetName = 'Help')]
@@ -36,15 +36,30 @@ $ErrorActionPreference = 'Stop'
 
 # Bootstrap dependencies
 if ($Bootstrap.IsPresent) {
-    Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
-    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-    & $PSScriptRoot/installTempRepo.ps1
-    if (-not (Get-Module -Name PSDepend -ListAvailable)) {
-        Install-module -Name PSDepend -Repository PSGallery
+    try {
+        $localRepoName = 'PowerShellBuild-local'
+        if ($null -eq (Get-PSRepository -Name $localRepoName -ErrorAction SilentlyContinue)) {
+            $splargs = @{
+                Name               = $localRepoName
+                SourceLocation     = Join-Path $PSScriptRoot 'Modules/'
+                InstallationPolicy = 'Trusted'
+            }
+            Register-PSRepository @splargs
+        }
+        Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        if (-not (Get-Module -Name PSDepend -ListAvailable)) {
+            Install-module -Name PSDepend -Repository PSGallery
+        }
+        Import-Module -Name PSDepend -Verbose:$false
+        Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
+    } catch {
+        throw
+    } finally {
+        if (Get-PSRepository -Name PowerShellBuild-locall -ErrorAction SilentlyContinue) {
+            Unregister-PSRepository -Name PowerShellBuild-local -ErrorAction Stop
+        }
     }
-    Import-Module -Name PSDepend -Verbose:$false
-    Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
-    & $PSScriptRoot/installTempRepo.ps1 -Uninstall
 }
 
 # Execute psake task(s)

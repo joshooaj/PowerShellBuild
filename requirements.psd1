@@ -14,7 +14,6 @@
     InvokeBuild      = '5.11.1'
 
     platyPS          = @{
-        DependsOn  = 'RegisterLocalRepo'
         Version    = '0.14.2'
         Parameters = @{
             Repository = 'PowerShellBuild-local'
