@@ -4,14 +4,6 @@ describe 'Build' {
         $script:testModuleProjectPath = Join-Path $env:BHProjectPath 'tests/TestModule/'
         $script:testModuleOutputPath = Join-Path $testModuleProjectPath 'Output/TestModule/0.1.0'
         $null = New-Item -Path $script:testModuleOutputPath -ItemType Directory -Force -ErrorAction Stop
-
-        Write-Host "PSScriptRoot: $PSScriptRoot"
-        Write-Host "PWD.Path: $($PWD.Path)"
-        Write-Host "BHProjectPath: $($env:BHProjectPath)"
-        Write-Host "TestModuleProjectPath: $testModuleProjectPath"
-        Write-Host "TestModuleOutputPath: $script:testModuleOutputPath"
-
-        Write-Host "TestModuleProjectPath Directory:`n`n$(Get-ChildItem -Path $script:testModuleProjectPath | Format-Table | Out-String)"
     }
 
     context 'Compile module' {
@@ -34,9 +26,6 @@ describe 'Build' {
         }
 
         it 'Has PSD1 and monolithic PSM1' {
-            Write-Host "TestModuleOutputPath: $script:testModuleOutputPath"
-            Write-Host "TestModuleOutputPath Directory:`n`n$(Get-ChildItem -Path $script:testModuleOutputPath | Format-Table | Out-String)"
-
             (Get-ChildItem -Path $script:testModuleOutputPath -File).Count | Should -Be 2
             "$script:testModuleOutputPath/TestModule.psd1"                 | Should -Exist
             "$script:testModuleOutputPath/TestModule.psm1"                 | Should -Exist
