@@ -128,7 +128,7 @@ properties {
 
 task default -depends Build
 
-task Build -FromModule PowerShellBuild -Version '0.1.0'
+task Build -FromModule joshooaj.PowerShellBuild -Version '0.1.0'
 ```
 
 ![Example](./media/psake_example.png)
@@ -141,7 +141,7 @@ Additionally, certain settings that control how the build tasks operate are over
 ###### .build.ps1
 
 ```powershell
-Import-Module PowerShellBuild
+Import-Module joshooaj.PowerShellBuild
 . PowerShellBuild.IB.Tasks
 
 # Overwrite build settings contained in PowerShellBuild

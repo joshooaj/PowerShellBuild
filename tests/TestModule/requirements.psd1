@@ -17,7 +17,10 @@
     'BuildHelpers' = @{
         Version = '2.0.10'
     }
-    'PowerShellBuild' = @{
-        Version = '0.5.0'
+    platyPS          = @{
+        Version    = '0.15.0'
+        Parameters = @{
+            Repository = 'PowerShellBuild-local'
+        }
     }
 }

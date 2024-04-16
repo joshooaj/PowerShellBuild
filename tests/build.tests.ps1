@@ -1,104 +1,97 @@
 describe 'Build' {
 
     BeforeAll {
-        # Hack for GH Actions
-        # For some reason, the TestModule build process create the output in the project root
-        # and not relative to it's own build file.
-        if ($env:GITHUB_ACTION) {
-            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'Output', 'TestModule', '0.1.0')
-        } else {
-            $testModuleOutputPath = [IO.Path]::Combine($env:BHProjectPath, 'tests', 'TestModule', 'Output', 'TestModule', '0.1.0')
-        }
+        $script:testModuleProjectPath = Join-Path $env:BHProjectPath 'tests/TestModule/'
+        $script:testModuleOutputPath = Join-Path $testModuleProjectPath 'Output/TestModule/0.1.0'
+        $null = New-Item -Path $script:testModuleOutputPath -ItemType Directory -Force -ErrorAction Stop
     }
 
     context 'Compile module' {
         BeforeAll {
-
-            Write-Host "PSScriptRoot: $PSScriptRoot"
-            Write-Host "OutputPath: $testModuleOutputPath"
-
-            # build is PS job so psake doesn't freak out because it's nested
-            Start-Job -ScriptBlock {
-                Set-Location $using:PSScriptRoot/TestModule
+            # build in another process so psake doesn't freak out because it's nested
+            Start-Job -ArgumentList $script:testModuleProjectPath -ScriptBlock {
+                param([string]$path)
+                Set-Location $path
                 $global:PSBuildCompile = $true
-                ./build.ps1 -Task Build
-            } | Wait-Job
+                ./build.ps1 -Task Build -Verbose
+            } | Receive-Job -Wait -AutoRemoveJob
         }
 
         AfterAll {
-            Remove-Item $testModuleOutputPath -Recurse -Force
+            Remove-Item $script:testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
-            $testModuleOutputPath | Should -Exist
+            $script:testModuleOutputPath | Should -Exist
         }
 
         it 'Has PSD1 and monolithic PSM1' {
-            (Get-ChildItem -Path $testModuleOutputPath -File).Count | Should -Be 2
-            "$testModuleOutputPath/TestModule.psd1"                 | Should -Exist
-            "$testModuleOutputPath/TestModule.psm1"                 | Should -Exist
-            "$testModuleOutputPath/Public"                          | Should -Not -Exist
-            "$testModuleOutputPath/Private"                         | Should -Not -Exist
+            (Get-ChildItem -Path $script:testModuleOutputPath -File).Count | Should -Be 2
+            "$script:testModuleOutputPath/TestModule.psd1"                 | Should -Exist
+            "$script:testModuleOutputPath/TestModule.psm1"                 | Should -Exist
+            "$script:testModuleOutputPath/Public"                          | Should -Not -Exist
+            "$script:testModuleOutputPath/Private"                         | Should -Not -Exist
         }
 
         it 'Has module header text' {
-            "$testModuleOutputPath/TestModule.psm1" | Should -FileContentMatch '# Module Header'
+            "$script:testModuleOutputPath/TestModule.psm1" | Should -FileContentMatch '# Module Header'
         }
 
         it 'Has module footer text' {
-            "$testModuleOutputPath/TestModule.psm1" | Should -FileContentMatch '# Module Footer'
+            "$script:testModuleOutputPath/TestModule.psm1" | Should -FileContentMatch '# Module Footer'
         }
 
         it 'Has function header text' {
-            "$testModuleOutputPath/TestModule.psm1" | Should -FileContentMatch '# Function header'
+            "$script:testModuleOutputPath/TestModule.psm1" | Should -FileContentMatch '# Function header'
         }
 
         it 'Has function footer text' {
-            "$testModuleOutputPath/TestModule.psm1" | Should -FileContentMatch '# Function footer'
+            "$script:testModuleOutputPath/TestModule.psm1" | Should -FileContentMatch '# Function footer'
         }
 
         it 'Does not contain excluded files' {
-            (Get-ChildItem -Path $testModuleOutputPath -File -Filter '*excludeme*' -Recurse).Count | Should -Be 0
-            "$testModuleOutputPath/TestModule.psm1" | Should -Not -FileContentMatch '=== EXCLUDE ME ==='
+            (Get-ChildItem -Path $script:testModuleOutputPath -File -Filter '*excludeme*' -Recurse).Count | Should -Be 0
+            "$script:testModuleOutputPath/TestModule.psm1" | Should -Not -FileContentMatch '=== EXCLUDE ME ==='
         }
 
         it 'Has MAML help XML' {
-            "$testModuleOutputPath/en-US/TestModule-help.xml" | Should -Exist
+            "$script:testModuleOutputPath/en-US/TestModule-help.xml" | Should -Exist
         }
     }
 
     context 'Dot-sourced module' {
         BeforeAll {
-            # build is PS job so psake doesn't freak out because it's nested
-            Start-Job -ScriptBlock {
-                Set-Location $using:PSScriptRoot/TestModule
+            # build in another process so psake doesn't freak out because it's nested
+            Start-Job -ArgumentList $script:testModuleProjectPath -ScriptBlock {
+                param([string]$path)
+                Set-Location $path
                 $global:PSBuildCompile = $false
                 ./build.ps1 -Task Build
-            } | Wait-Job
+            } | Receive-Job -Wait -AutoRemoveJob
         }
 
         AfterAll {
-            Remove-Item $testModuleOutputPath -Recurse -Force
+            Remove-Item $script:testModuleOutputPath -Recurse -Force
         }
 
         it 'Creates module' {
-            $testModuleOutputPath | Should -Exist
+            $script:testModuleOutputPath | Should -Exist
         }
 
         it 'Has PSD1 and dot-sourced functions' {
-            (Get-ChildItem -Path $testModuleOutputPath).Count | Should -Be 6
-            "$testModuleOutputPath/TestModule.psd1"           | Should -Exist
-            "$testModuleOutputPath/TestModule.psm1"           | Should -Exist
-            "$testModuleOutputPath/Public"                    | Should -Exist
-            "$testModuleOutputPath/Private"                   | Should -Exist
+            (Get-ChildItem -Path $script:testModuleOutputPath).Count | Should -Be 6
+            "$script:testModuleOutputPath/TestModule.psd1"           | Should -Exist
+            "$script:testModuleOutputPath/TestModule.psm1"           | Should -Exist
+            "$script:testModuleOutputPath/Public"                    | Should -Exist
+            "$script:testModuleOutputPath/Private"                   | Should -Exist
         }
 
         it 'Does not contain excluded stuff' {
-            (Get-ChildItem -Path $testModuleOutputPath -File -Filter '*excludeme*' -Recurse).Count | Should -Be 0
+            (Get-ChildItem -Path $script:testModuleOutputPath -File -Filter '*excludeme*' -Recurse).Count | Should -Be 0
         }
 
         it 'Has MAML help XML' {
-            "$testModuleOutputPath/en-US/TestModule-help.xml" | Should -Exist
+            "$script:testModuleOutputPath/en-US/TestModule-help.xml" | Should -Exist
         }
     }
 }

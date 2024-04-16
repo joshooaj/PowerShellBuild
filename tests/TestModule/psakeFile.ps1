@@ -1,4 +1,4 @@
-Import-Module ../../Output/PowerShellBuild -Force
+Import-Module ../../Output/joshooaj.PowerShellBuild -Force
 
 properties {
     # Pester can build the module using both scenarios
@@ -27,9 +27,9 @@ properties {
     $PSBPreference.Test.CodeCoverage.OutputFile = 'cc.xml'
 
     # Override the default output directory
-    $PSBPreference.Build.OutDir = 'Output'
+    $PSBPreference.Build.OutDir = Join-Path $psake.build_script_dir 'Output'
 }
 
 task default -depends Build
 
-task Build -FromModule PowerShellBuild -minimumVersion 0.5.0
+task Build -FromModule joshooaj.PowerShellBuild -minimumVersion 0.6.2

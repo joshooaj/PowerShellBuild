@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.6.2] Unreleased
+## [0.6.2] 2024-04-14
+
+### Changed
+
+- Renamed module from `PowerShellBuild` to `joshooaj.PowerShellBuild` to differentiate from the upstream version by [devblackops Brandon Olin](https://github.com/devblackops) at [psake/PowerShellBuild](https://github.com/psake/PowerShellBuild)
+- Dev: When bootstrapping this project, a custom "0.15.0" version of platyPS is installed directly from the `Modules/` folder in the repo. The custom version includes `ProgressAction` as a common parameter.
+- Dev: Use Pester 5 syntax when invoking pester in `psakeFile.ps1`
 
 ### Fixed
 

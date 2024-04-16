@@ -1,4 +1,4 @@
-Import-Module ../../Output/PowerShellBuild -Force
+Import-Module ../../Output/joshooaj.PowerShellBuild -Force
 . PowerShellBuild.IB.Tasks
 
 $PSBPreference.Build.CompileModule = $true

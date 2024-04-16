@@ -32,9 +32,28 @@ task Analyze -depends Build {
 
 task Pester -depends Build {
     Remove-Module $settings.ProjectName -ErrorAction SilentlyContinue -Verbose:$false
-
-    $testResultsXml = [IO.Path]::Combine($settings.OutputDir, 'testResults.xml')
-    $testResults    = Invoke-Pester -Path $settings.Tests -Output Detailed -PassThru
+    $shell = (Get-Process -Id $PID).Name -split '\.' | Select-Object -First 1
+    $config = New-PesterConfiguration @{
+        Run          = @{
+            Path                   = $settings.Tests
+            PassThru               = $true
+            SkipRemainingOnFailure = 'Container'
+        }
+        CodeCoverage = @{
+            <# TODO:
+                Setup code coverage. Tests currently cover the psake/IB tasks and not specific PowerShellBuild functions
+                so I'm not sure the best way to implement code coverage at the moment.
+            #>
+            Enabled    = $false
+            Path       = Join-Path $psake.build_script_dir "$($settings.ProjectName)/Public/"
+            OutputPath = Join-Path $psake.build_script_dir 'Output/coverage.xml'
+        }
+        TestResult   = @{
+            Enabled    = $true
+            OutputPath = Join-Path $psake.build_script_dir "Output/testResults-$shell.xml"
+        }
+    }
+    $testResults = Invoke-Pester -Configuration $config
 
     if ($testResults.FailedCount -gt 0) {
         $testResults | Format-List
@@ -46,6 +65,13 @@ task Clean -depends Init {
     if (Test-Path -Path $settings.ModuleOutDir) {
         Remove-Item -Path $settings.ModuleOutDir -Recurse -Force -Verbose:$false
     }
+
+    $testModuleOutDir = [io.path]::Combine($psake.build_script_dir, 'tests', 'TestModule', 'Output')
+    if (Test-Path -Path $testModuleOutDir) {
+        Remove-Item -Path $testModuleOutDir -Recurse -Force -Verbose:$false
+    }
+
+    Get-PSRepository -Name PowerShellBuild-local -ErrorAction SilentlyContinue | Unregister-PSRepository
 }
 
 task Build -depends Init, Clean {

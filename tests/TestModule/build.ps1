@@ -22,17 +22,35 @@ $ErrorActionPreference = 'Stop'
 
 # Bootstrap dependencies
 if ($Bootstrap.IsPresent) {
-    Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
-    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-    if ((Test-Path -Path ./requirements.psd1)) {
-        if (-not (Get-Module -Name PSDepend -ListAvailable)) {
-            Install-Module -Name PSDepend -Repository PSGallery -Scope CurrentUser -Force
+    try {
+        $localRepoName = 'PowerShellBuild-local'
+        if ($null -eq (Get-PSRepository -Name $localRepoName -ErrorAction SilentlyContinue)) {
+            $splargs = @{
+                Name               = $localRepoName
+                SourceLocation     = Join-Path $PSScriptRoot '../../Modules/'
+                InstallationPolicy = 'Trusted'
+            }
+            Register-PSRepository @splargs
         }
-        Import-Module -Name PSDepend -Verbose:$false
-        Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
-    } else {
-        Write-Warning "No [requirements.psd1] found. Skipping build dependency installation."
+        Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        if ((Test-Path -Path ./requirements.psd1)) {
+            if (-not (Get-Module -Name PSDepend -ListAvailable)) {
+                Install-Module -Name PSDepend -Repository PSGallery -Scope CurrentUser -Force
+            }
+            Import-Module -Name PSDepend -Verbose:$false
+            Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
+        } else {
+            Write-Warning "No [requirements.psd1] found. Skipping build dependency installation."
+        }
+    } catch {
+        throw
+    } finally {
+        if (Get-PSRepository -Name PowerShellBuild-locall -ErrorAction SilentlyContinue) {
+            Unregister-PSRepository -Name PowerShellBuild-local -ErrorAction Stop
+        }
     }
+
 }
 
 if ($BuildTool -eq 'psake') {
@@ -43,7 +61,7 @@ if ($BuildTool -eq 'psake') {
         Get-PSakeScriptTasks -buildFile $psakeFile |
             Format-Table -Property Name, Description, Alias, DependsOn
     } else {
-        Set-BuildEnvironment -Force
+        Set-BuildEnvironment -Force -Passthru
         Invoke-psake -buildFile $psakeFile -taskList $Task -nologo -properties $Properties
         exit ([int](-not $psake.build_success))
     }
