@@ -65,6 +65,13 @@ task Clean -depends Init {
     if (Test-Path -Path $settings.ModuleOutDir) {
         Remove-Item -Path $settings.ModuleOutDir -Recurse -Force -Verbose:$false
     }
+
+    $testModuleOutDir = [io.path]::Combine($psake.build_script_dir, 'tests', 'TestModule', 'Output')
+    if (Test-Path -Path $testModuleOutDir) {
+        Remove-Item -Path $testModuleOutDir -Recurse -Force -Verbose:$false
+    }
+
+    Get-PSRepository -Name PowerShellBuild-local -ErrorAction SilentlyContinue | Unregister-PSRepository
 }
 
 task Build -depends Init, Clean {
