@@ -61,9 +61,9 @@ if ($BuildTool -eq 'psake') {
         Get-PSakeScriptTasks -buildFile $psakeFile |
             Format-Table -Property Name, Description, Alias, DependsOn
     } else {
-        Set-BuildEnvironment -Force
+        Set-BuildEnvironment -Force -Passthru
         Write-Host (Get-ChildItem env:\BH* | Format-Table | Out-String) -ForegroundColor Green
-        Invoke-psake -buildFile $psakeFile -taskList $Task -nologo -properties $Properties
+        Invoke-psake -buildFile $psakeFile -taskList $Task -nologo -properties $Properties -Verbose
         exit ([int](-not $psake.build_success))
     }
 } else {

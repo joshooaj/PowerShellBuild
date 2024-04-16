@@ -21,7 +21,7 @@ describe 'Build' {
                 param([string]$path)
                 Set-Location $path
                 $global:PSBuildCompile = $true
-                ./build.ps1 -Task Build
+                ./build.ps1 -Task Build -Verbose
             } | Receive-Job -Wait -AutoRemoveJob
         }
 
