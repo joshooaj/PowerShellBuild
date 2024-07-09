@@ -1,6 +1,6 @@
 @{
     RootModule        = 'joshooaj.PowerShellBuild.psm1'
-    ModuleVersion     = '0.6.2'
+    ModuleVersion     = '0.6.3'
     GUID              = '47fe082e-9178-405d-b332-90c8865ec239'
     Author            = 'Brandon Olin'
     CompanyName       = 'Community'
