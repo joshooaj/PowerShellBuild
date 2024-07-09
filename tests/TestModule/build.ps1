@@ -22,35 +22,17 @@ $ErrorActionPreference = 'Stop'
 
 # Bootstrap dependencies
 if ($Bootstrap.IsPresent) {
-    try {
-        $localRepoName = 'PowerShellBuild-local'
-        if ($null -eq (Get-PSRepository -Name $localRepoName -ErrorAction SilentlyContinue)) {
-            $splargs = @{
-                Name               = $localRepoName
-                SourceLocation     = Join-Path $PSScriptRoot '../../Modules/'
-                InstallationPolicy = 'Trusted'
-            }
-            Register-PSRepository @splargs
+    Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+    if ((Test-Path -Path ./requirements.psd1)) {
+        if (-not (Get-Module -Name PSDepend -ListAvailable)) {
+            Install-Module -Name PSDepend -Repository PSGallery -Scope CurrentUser -Force
         }
-        Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
-        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-        if ((Test-Path -Path ./requirements.psd1)) {
-            if (-not (Get-Module -Name PSDepend -ListAvailable)) {
-                Install-Module -Name PSDepend -Repository PSGallery -Scope CurrentUser -Force
-            }
-            Import-Module -Name PSDepend -Verbose:$false
-            Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
-        } else {
-            Write-Warning "No [requirements.psd1] found. Skipping build dependency installation."
-        }
-    } catch {
-        throw
-    } finally {
-        if (Get-PSRepository -Name PowerShellBuild-locall -ErrorAction SilentlyContinue) {
-            Unregister-PSRepository -Name PowerShellBuild-local -ErrorAction Stop
-        }
+        Import-Module -Name PSDepend -Verbose:$false
+        Invoke-PSDepend -Path './requirements.psd1' -Install -Import -Force -WarningAction SilentlyContinue
+    } else {
+        Write-Warning "No [requirements.psd1] found. Skipping build dependency installation."
     }
-
 }
 
 if ($BuildTool -eq 'psake') {

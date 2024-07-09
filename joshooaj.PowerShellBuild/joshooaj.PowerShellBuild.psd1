@@ -8,10 +8,10 @@
     Description       = 'A common psake and Invoke-Build task module for PowerShell projects'
     PowerShellVersion = '3.0'
     RequiredModules   = @(
-        @{ModuleName = 'BuildHelpers';     ModuleVersion = '2.0.16'}
-        @{ModuleName = 'Pester';           ModuleVersion = '5.1.1'}
-        @{ModuleName = 'joshooaj.platyPS'; ModuleVersion = '0.15.12'}
-        @{ModuleName = 'psake';            ModuleVersion = '4.9.0'}
+        @{ ModuleName = 'BuildHelpers';     ModuleVersion = '2.0.16'  }
+        @{ ModuleName = 'Pester';           ModuleVersion = '5.1.1'   }
+        @{ ModuleName = 'joshooaj.platyPS'; ModuleVersion = '0.15.12' }
+        @{ ModuleName = 'psake';            ModuleVersion = '4.9.0'   }
     )
     FunctionsToExport = @(
         'Build-PSBuildMAMLHelp'
