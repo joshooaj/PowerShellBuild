@@ -151,7 +151,7 @@ $PSBPreference.Test.CodeCoverage.Enabled  = $false
 
 ![Example](./media/ib_example.png)
 
-[github-actions-badge]: https://github.com/joshooaj/PowerShellBuild/workflows/CI/badge.svg
+[github-actions-badge]: https://github.com/joshooaj/PowerShellBuild/workflows/Test/badge.svg
 [github-actions-build]: https://github.com/joshooaj/PowerShellBuild/actions
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/joshooaj.powershellbuild.svg
 [psgallery]: https://www.powershellgallery.com/packages/joshooaj.PowerShellBuild
