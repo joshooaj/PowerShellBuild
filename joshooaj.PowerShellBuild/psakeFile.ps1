@@ -116,7 +116,7 @@ task BuildHelp -depends GenerateMarkdown, GenerateMAML {} -description 'Builds h
 
 $genMarkdownPreReqs = {
     $result = $true
-    $latestPlatyPS = Get-Module -ListAvailable platyPS | Sort-Object Version | Select-Object -Last 1
+    $latestPlatyPS = Get-Module -ListAvailable joshooaj.platyPS | Sort-Object Version | Select-Object -Last 1
     if ($null -eq $latestPlatyPS) {
         Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
         $result = $false
@@ -135,7 +135,7 @@ task GenerateMarkdown -depends StageFiles -precondition $genMarkdownPreReqs {
 
 $genHelpFilesPreReqs = {
     $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
+    if (-not (Get-Module joshooaj.platyPS -ListAvailable)) {
         Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
         $result = $false
     }
@@ -147,7 +147,7 @@ task GenerateMAML -depends GenerateMarkdown -precondition $genHelpFilesPreReqs {
 
 $genUpdatableHelpPreReqs = {
     $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
+    if (-not (Get-Module joshooaj.platyPS -ListAvailable)) {
         Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
         $result = $false
     }

@@ -107,7 +107,7 @@ task Pester -If (. $pesterPreReqs) Build,{
 
 $genMarkdownPreReqs = {
     $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
+    if (-not (Get-Module joshooaj.platyPS -ListAvailable)) {
         Write-Warning "platyPS module is not installed. Skipping [$($task.name)] task."
         $result = $false
     }
@@ -127,7 +127,7 @@ task GenerateMarkdown -if (. $genMarkdownPreReqs) StageFiles,{
 
 $genHelpFilesPreReqs = {
     $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
+    if (-not (Get-Module joshooaj.platyPS -ListAvailable)) {
         Write-Warning "platyPS module is not installed. Skipping [$($task.name)] task."
         $result = $false
     }
@@ -141,7 +141,7 @@ task GenerateMAML -if (. $genHelpFilesPreReqs) GenerateMarkdown, {
 
 $genUpdatableHelpPreReqs = {
     $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
+    if (-not (Get-Module joshooaj.platyPS -ListAvailable)) {
         Write-Warning "platyPS module is not installed. Skipping [$($task.name)] task."
         $result = $false
     }
